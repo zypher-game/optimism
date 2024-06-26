@@ -2,6 +2,7 @@ package flags
 
 import (
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"strings"
 	"time"
 
@@ -361,6 +362,7 @@ var Flags []cli.Flag
 func init() {
 	optionalFlags = append(optionalFlags, P2PFlags(EnvVarPrefix)...)
 	optionalFlags = append(optionalFlags, oplog.CLIFlags(EnvVarPrefix)...)
+	optionalFlags = append(optionalFlags, celestia.CLIFlags(EnvVarPrefix)...)
 	Flags = append(requiredFlags, optionalFlags...)
 }
 

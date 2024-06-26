@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"math/big"
 	"net"
 	"os"
@@ -130,6 +131,7 @@ func DefaultSystemConfig(t *testing.T) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				DaConfig:                    celestia.Config{Rpc: "grpc://localhost:26650"},
 			},
 			"verifier": {
 				Driver: driver.Config{
@@ -141,6 +143,7 @@ func DefaultSystemConfig(t *testing.T) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				DaConfig:                    celestia.Config{Rpc: "grpc://localhost:26650"},
 			},
 		},
 		Loggers: map[string]log.Logger{
@@ -740,6 +743,7 @@ func (cfg SystemConfig) Start(t *testing.T, _opts ...SystemConfigOption) (*Syste
 		},
 		Stopped:   sys.Cfg.DisableBatcher, // Batch submitter may be enabled later
 		BatchType: batchType,
+		DaConfig:  celestia.Config{Rpc: "grpc://localhost:26650"},
 	}
 	// Batch Submitter
 	batcher, err := bss.BatcherServiceFromCLIConfig(context.Background(), "0.0.1", batcherCLIConfig, sys.Cfg.Loggers["batcher"])

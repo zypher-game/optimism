@@ -2,6 +2,7 @@ package flags
 
 import (
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -110,6 +111,7 @@ func init() {
 	optionalFlags = append(optionalFlags, oppprof.CLIFlags(EnvVarPrefix)...)
 	optionalFlags = append(optionalFlags, txmgr.CLIFlags(EnvVarPrefix)...)
 	optionalFlags = append(optionalFlags, compressor.CLIFlags(EnvVarPrefix)...)
+	optionalFlags = append(optionalFlags, celestia.CLIFlags(EnvVarPrefix)...)
 
 	Flags = append(requiredFlags, optionalFlags...)
 }

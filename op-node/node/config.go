@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"math"
 	"time"
 
@@ -63,6 +64,8 @@ type Config struct {
 
 	// [OPTIONAL] The reth DB path to read receipts from
 	RethDBPath string
+
+	DaConfig celestia.Config
 }
 
 type RPCConfig struct {
@@ -141,6 +144,9 @@ func (cfg *Config) Check() error {
 	}
 	if !(cfg.RollupHalt == "" || cfg.RollupHalt == "major" || cfg.RollupHalt == "minor" || cfg.RollupHalt == "patch") {
 		return fmt.Errorf("invalid rollup halting option: %q", cfg.RollupHalt)
+	}
+	if err := cfg.DaConfig.Check(); err != nil {
+		return fmt.Errorf("da config error: %w", err)
 	}
 	return nil
 }

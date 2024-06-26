@@ -11,6 +11,17 @@ volumes:
 
 
 services:
+  da:
+    image: ghcr.io/rollkit/local-celestia-devnet:v0.13.1
+    ports:
+      - "26658:26658"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:26659/header/1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   op_stack_go_builder:  # Not an actual service, but builds the prerequisite go images
     build:
       context: ../
@@ -59,6 +70,7 @@ services:
       - op_stack_go_builder
       - l1
       - l2
+      - da
     build:
       context: ../
       dockerfile: ./op-node/Dockerfile

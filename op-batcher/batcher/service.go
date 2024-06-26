@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"io"
 	"net"
 	_ "net/http/pprof"
@@ -67,6 +68,7 @@ type BatcherService struct {
 	stopped atomic.Bool
 
 	NotSubmittingOnStart bool
+	DAClient             *celestia.DAClient
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -113,6 +115,9 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	bs.initDriver()
 	if err := bs.initRPCServer(cfg); err != nil {
 		return fmt.Errorf("failed to start RPC server: %w", err)
+	}
+	if err := bs.initDA(cfg); err != nil {
+		return fmt.Errorf("failed to start da server: %w", err)
 	}
 
 	bs.Metrics.RecordInfo(bs.Version)
@@ -349,4 +354,13 @@ var _ cliapp.Lifecycle = (*BatcherService)(nil)
 // to start/stop/restart the batch-submission work, for use in testing.
 func (bs *BatcherService) Driver() rpc.BatcherDriver {
 	return bs.driver
+}
+
+func (bs *BatcherService) initDA(cfg *CLIConfig) error {
+	client, err := celestia.NewDAClient(cfg.DaConfig.Rpc, cfg.DaConfig.AuthToken, cfg.DaConfig.Namespace, cfg.DaConfig.EthFallbackDisabled)
+	if err != nil {
+		return err
+	}
+	bs.DAClient = client
+	return nil
 }

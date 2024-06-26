@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	celestia "github.com/ethereum-optimism/optimism/op-celestia"
 	"io"
 
 	"github.com/ethereum/go-ethereum"
@@ -14,6 +15,16 @@ import (
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 )
+
+var daClient *celestia.DAClient
+
+func SetDAClient(c *celestia.DAClient) error {
+	if daClient != nil {
+		return errors.New("da client already configured")
+	}
+	daClient = c
+	return nil
+}
 
 type DataIter interface {
 	Next(ctx context.Context) (eth.Data, error)
